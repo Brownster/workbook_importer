@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file
+from flask import Flask, request, send_file, render_template
 from flask_wtf import FlaskForm
 from wtforms import SubmitField
 from werkzeug.utils import secure_filename
@@ -32,9 +32,10 @@ def upload_file():
                 writer = csv.DictWriter(f, fieldnames=keys)
                 writer.writeheader()
                 writer.writerows(csv_data)
-
-            return send_file(csv_file.name, as_attachment=True, attachment_filename='output.csv')
-            
+            return render_template('upload.html', form=form)    
+    
+    
+           
     return '''
     <!doctype html>
     <title>Upload YAML File</title>
