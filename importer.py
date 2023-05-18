@@ -32,7 +32,9 @@ def upload_file():
                 writer = csv.DictWriter(f, fieldnames=keys)
                 writer.writeheader()
                 writer.writerows(csv_data)
-            return render_template('upload.html', form=form)    
+            return send_file(csv_file.name, as_attachment=True, attachment_filename='converted.csv', mimetype='text/csv')
+
+    return render_template('upload.html', form=form)
     
     
            
