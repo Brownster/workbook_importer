@@ -1,5 +1,50 @@
+from flask import Flask, request, send_file
+from flask_wtf import FlaskForm
+from wtforms import SubmitField
+from werkzeug.utils import secure_filename
+import os
 import csv
 import yaml
+from tempfile import NamedTemporaryFile
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'your-secret-key'  # replace with your own secret key
+app.config['UPLOAD_FOLDER'] = '/path/to/upload/folder'  # replace with your desired upload folder path
+
+class ConversionForm(FlaskForm):
+    submit = SubmitField('Convert')
+
+@app.route('/', methods=['GET', 'POST'])
+def upload_file():
+    form = ConversionForm()
+    if form.validate_on_submit():
+        file = request.files['file']
+        if file:
+            filename = secure_filename(file.filename)
+            yaml_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(yaml_file)
+            
+            csv_data = convert_yaml_to_csv(yaml_file)
+            keys = csv_data[0].keys()
+
+            csv_file = NamedTemporaryFile(delete=False, suffix='.csv')
+            with open(csv_file.name, 'w', newline='') as f:
+                writer = csv.DictWriter(f, fieldnames=keys)
+                writer.writeheader()
+                writer.writerows(csv_data)
+
+            return send_file(csv_file.name, as_attachment=True, attachment_filename='output.csv')
+            
+    return '''
+    <!doctype html>
+    <title>Upload YAML File</title>
+    <h1>Upload YAML file for conversion to CSV</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <p>{}</p>
+        <input type="submit" value="Convert">
+    </form>
+    '''.format(form.submit())
 
 def create_row(hostname, details, exporter_name_os, exporter_name_app):
     row = {
@@ -113,3 +158,7 @@ with open('exporters.csv', 'w', newline='') as file:
     writer.writerows(csv_data)
 
 print("CSV file generated successfully.")
+
+
+if __name__ == '__main__':
+    app.run(port=5000, debug=True)
