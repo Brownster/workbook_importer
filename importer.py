@@ -1,167 +1,158 @@
-from flask import Flask, request, send_file, render_template
-from flask_wtf import FlaskForm
-from wtforms import SubmitField
-from werkzeug.utils import secure_filename
-import os
 import csv
 import yaml
-from tempfile import NamedTemporaryFile
+import sys
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your-secret-key'  # replace with your own secret key
-app.config['UPLOAD_FOLDER'] = '/path/to/upload/folder'  # replace with your desired upload folder path
+def create_row(hostname, details, exporter_name_os='', exporter_name_app='', exporter_name_app_ssl='', exporter_name_app_bb=''):
+    hostname_parts = hostname.split('.')
+    hostname_field = hostname_parts[0]
+    domain_field = '.'.join(hostname_parts[1:])
 
-class ConversionForm(FlaskForm):
-    submit = SubmitField('Convert')
-
-@app.route('/', methods=['GET', 'POST'])
-def upload_file():
-    form = ConversionForm()
-    if form.validate_on_submit():
-        file = request.files['file']
-        if file:
-            filename = secure_filename(file.filename)
-            yaml_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(yaml_file)
-            
-            csv_data = convert_yaml_to_csv(yaml_file)
-            keys = csv_data[0].keys()
-
-            csv_file = NamedTemporaryFile(delete=False, suffix='.csv')
-            with open(csv_file.name, 'w', newline='') as f:
-                writer = csv.DictWriter(f, fieldnames=keys)
-                writer.writeheader()
-                writer.writerows(csv_data)
-            return send_file(csv_file.name, as_attachment=True, attachment_filename='converted.csv', mimetype='text/csv')
-
-    return render_template('upload.html', form=form)
-    
-    
-           
-    return '''
-    <!doctype html>
-    <title>Upload YAML File</title>
-    <h1>Upload YAML file for conversion to CSV</h1>
-    <form method="POST" enctype="multipart/form-data">
-        <input type="file" name="file">
-        <p>{}</p>
-        <input type="submit" value="Convert">
-    </form>
-    '''.format(form.submit())
-
-def create_row(hostname, details, exporter_name_os, exporter_name_app):
     row = {
-        'Configuration Item Name': '',
+        'Configuration Item Name': hostname_field,
         'Location': details.get('location', ''),
         'Country': details.get('country', ''),
-        'Domain': details.get('domain', ''),
-        'Status': details.get('status', ''),
-        'Secret Server URL': details.get('secret_server_url', ''),
-        'Hostnames': details.get('hostnames', ''),
-        'FQDN': details.get('fqdn', ''),
+        'Domain': domain_field,
+        'Hostnames': hostname_field,
+        'FQDN': hostname,
         'IP Address': details.get('ip_address', ''),
-        'Application Ports': '',
         'Exporter_name_os': exporter_name_os,
-        'Done': '',
         'OS-Listen-Port': details.get('listen_port', ''),
         'Exporter_name_app': exporter_name_app,
-        'Done': '',
-        'App-Listen-Port': details.get('app_listen_port', ''),
-        'http_2xx': '',
-        'icmp': 'TRUE' if details.get('module') == 'icmp' else '',
-        'ssh-banner': 'TRUE' if details.get('module') == 'ssh_banner' else '',
-        'tcp-connect': '',
-        'SNMP': '',
+        'App-Listen-Port': details.get('listen_port', ''),
+        'Exporter_name_app_2': exporter_name_app,
+        'App-Listen-Port-2': details.get('listen_port', ''),
+        'Exporter_name_app_3': exporter_name_app,
+        'App-Listen-Port-3': details.get('listen_port', ''),
         'Exporter_SSL': '',
-        'Notes': '',
-        'Description': '',
-        'Story #': '',
-        'Completed': '',
-        'Review comments': '',
-        'MaaS alarm': '',
-        'Resolution': '',
-        'comm_string': '',
+        'icmp': 'FALSE',
+        'ssh-banner': 'FALSE',
+        'tcp-connect': 'FALSE',
         'ssh_username': details.get('username', ''),
-        'ssh_password': details.get('password', ''),
-        'jmx_ports': '',
-        'snmp_version': '',
-        'snmp_user': '',
-        'snmp_password': ''
+        'ssh_password': details.get('password', '')
     }
     return row
 
-def handle_exporter(exporter_data, exporter_name_os, exporter_name_app, csv_data):
+def process_exporter_data_os(exporter_data, csv_data, exporter_name):
     for hostname, details in exporter_data.items():
-        csv_data.append(create_row(hostname, details, exporter_name_os, exporter_name_app))
+        if hostname not in csv_data:
+            csv_data[hostname] = create_row(hostname, details, exporter_name_os=exporter_name)
+        else:
+            csv_data[hostname]['Exporter_name_os'] = exporter_name
+            csv_data[hostname]['OS-Listen-Port'] = details.get('listen_port', '')
 
-def convert_yaml_to_csv(yaml_file):
-    with open(yaml_file, 'r') as file:
+
+
+def process_exporter_data_app(exporter_data, csv_data, exporter_name_os='', exporter_name_app=''):
+    for hostname, details in exporter_data.items():
+        if hostname not in csv_data:
+            csv_data[hostname] = create_row(hostname, details, exporter_name_os, exporter_name_app)
+        else:
+            if exporter_name_app:
+                for i in range(1, 4):
+                    app_key = f'Exporter_name_app_{i}' if i != 1 else 'Exporter_name_app'
+                    port_key = f'App-Listen-Port-{i}' if i != 1 else 'App-Listen-Port'
+                    if not csv_data[hostname].get(app_key):
+                        csv_data[hostname][app_key] = exporter_name_app
+                        csv_data[hostname][port_key] = details.get('listen_port', '')
+                        break
+
+
+
+def yaml_to_csv(yaml_file_path, csv_file_path):
+    with open(yaml_file_path, 'r') as file:
         data = yaml.safe_load(file)
 
-    csv_data = []
+    csv_data = {}
 
-    exporter_data = {
-        'exporter_linux': data.get('exporter_linux', {}),
-        'exporter_acm': data.get('exporter_acm', {}),
-        'exporter_aic': data.get('exporter_aic', {}),
-        'exporter_audiocodesbc': data.get('exporter_audiocodesbc', {}),
-        'exporter_cms': data.get('exporter_cms', {}),
-        'exporter_aaep': data.get('exporter_aaep', {}),
-        'exporter_voiceportal': data.get('exporter_voiceportal', {}),
-        'exporter_oceanamonitor': data.get('exporter_oceanamonitor', {}),
-        'exporter_aes': data.get('exporter_aes', {}),
-        'exporter_aam': data.get('exporter_aam', {}),
-        'exporter_breeze': data.get('exporter_breeze', {}),
-        'exporter_ipo': data.get('exporter_ipo', {}),
-        'exporter_iq': data.get('exporter_iq', {}),
-        'exporter_blackbox': data.get('exporter_blackbox', {}),
-        'exporter_filestat': data.get('exporter_filestat', {}),
-        'exporter_gateway': data.get('exporter_gateway', {}),
-        'exporter_mpp': data.get('exporter_mpp', {}),
-        'exporter_ams': data.get('exporter_ams', {}),
-        'exporter_pc5': data.get('exporter_pc5', {}),
-        'exporter_avayasbc': data.get('exporter_avayasbc', {}),
-        'exporter_sm': data.get('exporter_sm', {}),
-        'exporter_weblm': data.get('exporter_weblm', {}),
-        'exporter_wfodb': data.get('exporter_wfodb', {}),
-        'exporter_jmx': data.get('exporter_jmx', {}),
-        'exporter_tcti': data.get('exporter_tcti', {}),
-        'exporter_callback': data.get('exporter_callback', {}),
-        'exporter_drac': data.get('exporter_drac', {}),
-        'exporter_network': data.get('exporter_network', {}),
-        'exporter_nuancelm': data.get('exporter_nuancelm', {}),
-        'exporter_pfsense': data.get('exporter_pfsense', {}),
-        'exporter_ssl': data.get('exporter_ssl', {}),
-        'exporter_baas': data.get('exporter_baas', {}),
-        'exporter_windows': data.get('exporter_windows', {}),
-        'exporter_vmware': data.get('exporter_vmware', {}),
-        'exporter_REDIS': data.get('exporter_REDIS', {}),
-        'exporter_verint': data.get('exporter_verint', {})
-    }
+    os_exporters = ['exporter_linux', 'exporter_windows', 'exporter_verint', 'exporter_vmware']
+    app_exporters = [
+    'exporter_cms', 'exporter_avayasbc', 'exporter_aes', 'exporter_verint', 
+    'exporter_gateway', 'exporter_breeze', 'exporter_session_manager', 'exporter_acm', 
+    'exporter_jmx', 'exporter_vmware', 'exporter_kafka', 'exporter_callback', 
+    'exporter_drac', 'exporter_genesyscloud', 'exporter_tctisoftphone', 
+    'exporter_network', 'exporter_aaep', 'exporter_pfsense', 'exporter_aic', 
+    'exporter_voice_portal', 'exporter_aam', 'exporter_ip_office', 'exporter_iq', 
+    'exporter_mpp', 'exporter_ams', 'exporter_pc5', 'exporter_wfodb', 
+    'exporter_audiocodesbc', 'exporter_baas', 'exporter_redis'
+]
+    ssl_exporters = ['exporter_ssl']
+    bb_exporters = ['exporter_blackbox']
 
-    for exporter, exporter_data in exporter_data.items():
-        if exporter == 'exporter_blackbox':
-            handle_exporter(exporter_data, 'exporter_blackbox', '', csv_data)
-        elif exporter in ['exporter_windows', 'exporter_verint', 'exporter_vmware']:
-            handle_exporter(exporter_data, exporter, '', csv_data)
+    # Create a new dictionary with hostname as the main key
+    for exporter_name, exporter_data in data.items():
+        if exporter_name in os_exporters:
+            process_exporter_data_os(exporter_data, csv_data, exporter_name=exporter_name)
+        elif exporter_name in app_exporters:
+            process_exporter_data_app(exporter_data, csv_data, exporter_name_app=exporter_name, exporter_name_os=os_exporters)
+        elif exporter_name in bb_exporters:
+            process_exporter_data_bb(exporter_data, csv_data)
+        elif exporter_name in ssl_exporters:
+            process_exporter_data_ssl(exporter_data, csv_data)
+
+    write_to_csv(csv_data, csv_file_path)
+
+def write_to_csv(csv_data, csv_file_path):
+    with open(csv_file_path, 'w', newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=FIELDNAMES)
+        writer.writeheader()
+        for hostname in csv_data:
+            writer.writerow(csv_data[hostname])
+
+
+def handle_exporter(exporter_data, exporter_name_os, exporter_name_app, csv_data):
+    for hostname, details in exporter_data.items():
+        app_index = next((i for i in range(1, 4) if details['ip_address'] not in csv_data or not csv_data[details['ip_address']].get(f'Exporter_name_app_{i}')), None)
+        if app_index is None:
+            print(f"Warning: Host {hostname} has more than 3 application exporters.")
+            continue
+        if details['ip_address'] in csv_data:
+            csv_data[details['ip_address']][f'Exporter_name_app_{app_index}'] = exporter_name_app
+            csv_data[details['ip_address']][f'App-Listen-Port-{app_index}'] = details.get('listen_port', '')
         else:
-            handle_exporter(exporter_data, '', exporter, csv_data)
+            row = create_row(hostname, details, exporter_name_os, exporter_name_app, app_index)
+            csv_data[details['ip_address']] = row
 
-    return csv_data
+def process_exporter_data_bb(exporter_data, csv_data):
+    for hostname, hostname_data in exporter_data.items():
+        for ip, ip_data in hostname_data.items():
+            if hostname not in csv_data:
+                csv_data[hostname] = dict.fromkeys(FIELDNAMES)
+                csv_data[hostname]['Hostnames'] = hostname.split('.')[0]
+                csv_data[hostname]['FQDN'] = hostname
+                csv_data[hostname]['Domain'] = hostname.split('.')[1] if len(hostname.split('.')) > 1 else ''
 
-# Example usage
-yaml_file = 'your_yaml_file.yaml'
-csv_data = convert_yaml_to_csv(yaml_file)
-keys = csv_data[0].keys()
+            # Setting icmp, ssh-banner, tcp-connect to TRUE if the module type is present
+            module = ip_data.get('module', '')
+            if module == 'icmp':
+                csv_data[hostname]['icmp'] = 'TRUE'
+            elif module == 'ssh_banner':
+                csv_data[hostname]['ssh-banner'] = 'TRUE'
+            elif module == 'tcp-connect':
+                csv_data[hostname]['tcp-connect'] = 'TRUE'
 
-# Writing data to CSV file
-with open('exporters.csv', 'w', newline='') as file:
-    writer = csv.DictWriter(file, fieldnames=keys)
-    writer.writeheader()
-    writer.writerows(csv_data)
 
-print("CSV file generated successfully.")
+def process_exporter_data_ssl(exporter_data, csv_data):
+    for hostname, hostname_data in exporter_data.items():
+        if hostname not in csv_data:
+            csv_data[hostname] = dict.fromkeys(FIELDNAMES)
+            csv_data[hostname]['Hostnames'] = hostname.split('.')[0]
+            csv_data[hostname]['FQDN'] = hostname
+            csv_data[hostname]['Domain'] = hostname.split('.')[1] if len(hostname.split('.')) > 1 else ''
+
+        csv_data[hostname]['snmp'] = 'TRUE'  # Setting SNMP to 'TRUE' if exporter_ssl is present
+
+
+FIELDNAMES = ['Configuration Item Name', 'Location', 'Country', 'Domain', 'Hostnames', 
+              'FQDN', 'IP Address', 'Exporter_name_os', 'OS-Listen-Port', 
+              'Exporter_name_app', 'App-Listen-Port', 'Exporter_name_app_1', 'App-Listen-Port-1',
+              'Exporter_name_app_2', 'App-Listen-Port-2', 
+              'Exporter_name_app_3', 'App-Listen-Port-3', 'http_2xx', 'icmp', 'ssh-banner', 'tcp-connect', 
+              'SNMP', 'Exporter_SSL', 'Notes', 'Description', 'Story #', 'Completed', 'Review comments', 'MaaS alarm', 
+              'Resolution', 'comm_string', 'ssh_username', 'ssh_password', 'jmx_ports', 'snmp_version', 'snmp_user', 
+              'snmp_password']
 
 
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    yaml_file_path = sys.argv[1]
+    csv_file_path = sys.argv[2]
+    yaml_to_csv(yaml_file_path, csv_file_path)
