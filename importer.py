@@ -43,6 +43,9 @@ def process_exporter_data_os(exporter_data, csv_data, exporter_name):
 
 
 def process_exporter_data_app(exporter_data, csv_data, exporter_name_os='', exporter_name_app=''):
+    if exporter_data is None:
+        print(f"Warning: exporter_data is None for {exporter_name_app}")
+        return
     for hostname, details in exporter_data.items():
         if hostname not in csv_data:
             csv_data[hostname] = create_row(hostname, details, exporter_name_os, exporter_name_app)
@@ -55,6 +58,7 @@ def process_exporter_data_app(exporter_data, csv_data, exporter_name_os='', expo
                         csv_data[hostname][app_key] = exporter_name_app
                         csv_data[hostname][port_key] = details.get('listen_port', '')
                         break
+
 
 
 
