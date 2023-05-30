@@ -1,7 +1,7 @@
 from flask import Flask, request, send_from_directory
 from werkzeug.utils import secure_filename
 import os
-import importer10c1
+import importer
 
 app = Flask(__name__)
 
@@ -29,7 +29,7 @@ def upload_file():
             # process the file
             output_filename = filename.rsplit('.', 1)[0] + '.csv'
             output_filepath = os.path.join(app.config['UPLOAD_FOLDER'], output_filename)
-            importer10c1.yaml_to_csv(filepath, output_filepath)  # replace with the name of your Python script and function
+            importer.yaml_to_csv(filepath, output_filepath)  #
             return '''
             <a href="/uploads/{filename}">Download {filename}</a>
             '''.format(filename=output_filename), 201
