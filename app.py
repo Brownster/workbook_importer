@@ -29,7 +29,8 @@ def upload_file():
             # process the file
             output_filename = filename.rsplit('.', 1)[0] + '.csv'
             output_filepath = os.path.join(app.config['UPLOAD_FOLDER'], output_filename)
-            importer.yaml_to_csv(filepath, output_filepath)  #
+            importer.yaml_to_csv(filepath, output_filepath)
+            os.remove(filepath)
             return '''
             <a href="/uploads/{filename}">Download {filename}</a>
             '''.format(filename=output_filename), 201
