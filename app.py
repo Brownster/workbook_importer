@@ -6,7 +6,7 @@ import importer
 app = Flask(__name__)
 
 # Configure upload settings
-app.config['UPLOAD_FOLDER'] = './uploads'
+app.config['UPLOAD_FOLDER'] = '/tmp'
 app.config['ALLOWED_EXTENSIONS'] = {'yaml', 'yml'}
 
 def allowed_file(filename):
