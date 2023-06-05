@@ -70,14 +70,15 @@ def yaml_to_csv(yaml_file_path, csv_file_path):
 
     os_exporters = ['exporter_linux', 'exporter_windows', 'exporter_verint', 'exporter_vmware']
     app_exporters = [
-    'exporter_cms', 'exporter_avayasbc', 'exporter_aes', 'exporter_verint', 
-    'exporter_gateway', 'exporter_breeze', 'exporter_sm', 'exporter_acm', 
-    'exporter_jmx', 'exporter_vmware', 'exporter_kafka', 'exporter_callback', 
-    'exporter_drac', 'exporter_genesyscloud', 'exporter_tcti', 
-    'exporter_network', 'exporter_aaep', 'exporter_pfsense', 'exporter_aic', 
-    'exporter_voice_portal', 'exporter_aam', 'exporter_ipoffice', 'exporter_iq', 
-    'exporter_mpp', 'exporter_ams', 'exporter_pc5', 'exporter_wfodb', 
-    'exporter_audiocodesbc', 'exporter_baas', 'exporter_redis', 'exporter_weblm'
+    'exporter_cms', 'exporter_avayasbc', 'exporter_aes', 'exporter_verint',
+    'exporter_gateway', 'exporter_breeze', 'exporter_sm', 'exporter_acm',
+    'exporter_jmx', 'exporter_kafka', 'exporter_callback',
+    'exporter_drac', 'exporter_genesyscloud', 'exporter_tcti', 'exporter_network',
+    'exporter_aaep', 'exporter_pfsense', 'exporter_aic', 'exporter_voice_portal',
+    'exporter_aam', 'exporter_ipoffice', 'exporter_iq',
+    'exporter_ams', 'exporter_pc5', 'exporter_wfodb', 'exporter_mpp',
+    'exporter_baas', 'exporter_redis', 'exporter_blackbox',
+    'exporter_ssl', 'exporter_weblm', 'exporter_audiocodesbc'
 ]
     ssl_exporters = ['exporter_ssl']
     bb_exporters = ['exporter_blackbox']
