@@ -23,7 +23,7 @@ def create_row(hostname, details, exporter_name_os='', exporter_name_app='', exp
         'App-Listen-Port-2': details.get('listen_port', ''),
         'Exporter_name_app_3': exporter_name_app,
         'App-Listen-Port-3': details.get('listen_port', ''),
-        'Exporter_SSL': '',
+        'Exporter_SSL': 'FALSE',
         'icmp': 'FALSE',
         'ssh-banner': 'FALSE',
         'tcp-connect': 'FALSE',
@@ -144,7 +144,7 @@ def process_exporter_data_ssl(exporter_data, csv_data):
             csv_data[hostname]['FQDN'] = hostname
             csv_data[hostname]['Domain'] = hostname.split('.')[1] if len(hostname.split('.')) > 1 else ''
 
-        csv_data[hostname]['snmp'] = 'TRUE'  # Setting SNMP to 'TRUE' if exporter_ssl is present
+        csv_data[hostname]['Exporter_SSL'] = 'TRUE'  # Setting SNMP to 'TRUE' if exporter_ssl is present
 
 
 FIELDNAMES = ['Configuration Item Name', 'Location', 'Country', 'Domain', 'Hostnames', 
