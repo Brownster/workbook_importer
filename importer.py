@@ -75,7 +75,7 @@ def yaml_to_csv(yaml_file_path, csv_file_path):
     'exporter_jmx', 'exporter_kafka', 'exporter_callback',
     'exporter_drac', 'exporter_genesyscloud', 'exporter_tcti',
     'exporter_aaep', 'exporter_pfsense', 'exporter_aic',
-    'exporter_aam', 'exporter_ipoffice', 'exporter_iq',
+    'exporter_aam', 'exporter_ipoffice', 'exporter_iq', 'exporter_oceanamonitor',
     'exporter_ams', 'exporter_pc5', 'exporter_wfodb',
     'exporter_baas', 'exporter_redis', 'exporter_mpp', 'exporter_network',
     'exporter_weblm', 'exporter_audiocodesbc', 'exporter_voice_portal'
