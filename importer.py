@@ -125,7 +125,11 @@ def process_exporter_data_bb(exporter_data, csv_data):
                 csv_data[hostname]['Hostnames'] = hostname.split('.')[0]
                 csv_data[hostname]['FQDN'] = hostname
                 csv_data[hostname]['Domain'] = hostname.split('.')[1] if len(hostname.split('.')) > 1 else ''
-
+                csv_data[hostname]['IP Address'] = ip_address
+                csv_data[hostname]['Configuration Item Name'] = ip_data.get('config_item_name', '')
+                csv_data[hostname]['Location'] = ip_data.get('location', '')
+                csv_data[hostname]['Country'] = ip_data.get('country', '')
+                
             # Setting icmp, ssh-banner, tcp-connect to TRUE if the module type is present
             module = ip_data.get('module', '')
             if module == 'icmp':
