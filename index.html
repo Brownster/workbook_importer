@@ -1,8 +1,48 @@
 <!doctype html>
-<title>Upload YAML File</title>
-<h1>Upload YAML file for conversion to CSV</h1>
-<form method="POST" enctype="multipart/form-data">
-    {{ form.csrf_token }}
-    <input type="file" name="file">
-    <p>{{ form.submit() }}</p>
-</form>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload YAML File</title>
+    <style>
+        /* Including the CSS styles directly in the HTML file */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: url('{{ url_for('static', filename='background.png') }}');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+        }
+
+        .banner-image {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto 20px auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Upload YAML file for conversion to CSV</h1>
+        <form method="POST" enctype="multipart/form-data">
+            {{ form.csrf_token }}
+            <input type="file" name="file">
+            <p>{{ form.submit() }}</p>
+        </form>
+    </div> <!-- Closing the container div -->
+</body>
+
+</html>
+
