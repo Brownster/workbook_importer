@@ -38,7 +38,7 @@
         <h1>Upload YAML file for conversion to CSV</h1>
         <form method="POST" enctype="multipart/form-data">
             {{ form.csrf_token }}
-            <input type="file" name="file">
+            <input type="submit" value="Upload">
             <p>{{ form.submit() }}</p>
         </form>
     </div> <!-- Closing the container div -->
