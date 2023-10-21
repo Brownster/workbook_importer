@@ -1,4 +1,4 @@
-from flask import Flask, request, send_from_directory
+from flask import Flask, request, send_from_directory, render_template
 from werkzeug.utils import secure_filename
 import os
 import importer
@@ -13,13 +13,16 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
 @app.route('/', methods=['GET', 'POST'])
+from flask import render_template
+
+@app.route('/', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
             return 'No file part in the request', 400
         file = request.files['file']
-        # if user does not select file, browser also submit an empty part without filename
+        # if the user does not select a file, the browser also submits an empty part without a filename
         if file.filename == '':
             return 'No selected file', 400
         if file and allowed_file(file.filename):
@@ -34,15 +37,8 @@ def upload_file():
             return '''
             <a href="/uploads/{filename}">Download {filename}</a>
             '''.format(filename=output_filename), 201
-    return '''
-    <!doctype html>
-    <title>Upload YAML file</title>
-    <h1>Upload YAML file</h1>
-    <form method=post enctype=multipart/form-data>
-      <input type=file name=file>
-      <input type=submit value=Upload>
-    </form>
-    '''
+    return render_template('index.html')
+
 
 
 @app.route('/uploads/<filename>')
