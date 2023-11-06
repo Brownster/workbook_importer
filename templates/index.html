@@ -63,11 +63,14 @@
 
 <body>
     <div class="container">
-        <h1>Upload YAML file for conversion to CSV</h1>
-        <form method="POST" enctype="multipart/form-data">
-            <input type="file" name="file">
-            <p><input type="submit" value="Upload"></p>
+        <h1>Workbook Importer</h1>
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <label for="file">Workbook CSV:</label>
+            <input type="file" id="file" name="file" accept=".xlsx, .xls, .csv" required>
+
+            <input type="submit" value="Upload and Process">
         </form>
+    </div>
 
     </div>
 </body>
