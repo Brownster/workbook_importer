@@ -14,22 +14,50 @@
          background-repeat: no-repeat;
          background-position: center center;
          background-attachment: fixed;
+         margin: 0;
+         padding: 0;
+         color: white;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: rgba(0, 0, 0, 0.7);
             border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
 
-        .banner-image {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 0 auto 20px auto;
+        h1 {
+            color: #FFD700; 
         }
+
+        label, input, button {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type=text], input[type=file] {
+            width: 100%;
+            padding: 8px;
+            margin: 4px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type=submit] {
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
     </style>
 </head>
 
@@ -41,7 +69,7 @@
             <p><input type="submit" value="Upload"></p>
         </form>
 
-    </div> <!-- Closing the container div -->
+    </div>
 </body>
 
 </html>
