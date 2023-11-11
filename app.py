@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 # Configure upload settings
 app.config['UPLOAD_FOLDER'] = '/tmp'
-app.config['ALLOWED_EXTENSIONS'] = {'yaml', 'yml'}
+app.config['ALLOWED_EXTENSIONS'] = {'yaml', 'yml, 'eyaml'}
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
