@@ -119,25 +119,37 @@ def handle_exporter(exporter_data, exporter_name_os, exporter_name_app, csv_data
 
 def process_exporter_data_bb(exporter_data, csv_data):
     for hostname, hostname_data in exporter_data.items():
+        # Initialize the data structure for the hostname if not already present
+        if hostname not in csv_data:
+            csv_data[hostname] = dict.fromkeys(FIELDNAMES, '')
+            csv_data[hostname]['Hostnames'] = hostname.split('.')[0]
+            csv_data[hostname]['FQDN'] = hostname
+            csv_data[hostname]['Domain'] = '.'.join(hostname.split('.')[1:]) if len(hostname.split('.')) > 1 else ''
+            csv_data[hostname]['Configuration Item Name'] = hostname.split('.')[0]
+
+        # Initialize the flags
+        csv_data[hostname]['icmp'] = 'FALSE'
+        csv_data[hostname]['tcp-connect'] = 'FALSE'
+        csv_data[hostname]['ssh-banner'] = 'FALSE'
+
         for ip, ip_data in hostname_data.items():
-            if hostname not in csv_data:
-                csv_data[hostname] = dict.fromkeys(FIELDNAMES)
-                csv_data[hostname]['Hostnames'] = hostname.split('.')[0]
-                csv_data[hostname]['FQDN'] = hostname
-                csv_data[hostname]['Domain'] = hostname.split('.')[1] if len(hostname.split('.')) > 1 else ''
-                csv_data[hostname]['IP Address'] = ip
-                csv_data[hostname]['Configuration Item Name'] = hostname.split('.')[0]
-                csv_data[hostname]['Location'] = ip_data.get('location', '')
-                csv_data[hostname]['Country'] = ip_data.get('country', '')
-                
-            # Setting icmp, ssh-banner, tcp-connect to TRUE if the module type is present
             module = ip_data.get('module', '')
             if module == 'icmp':
                 csv_data[hostname]['icmp'] = 'TRUE'
+            elif module == 'tcp_connect':
+                csv_data[hostname]['tcp-connect'] = 'TRUE'
             elif module == 'ssh_banner':
                 csv_data[hostname]['ssh-banner'] = 'TRUE'
-            elif module == 'tcp-connect':
-                csv_data[hostname]['tcp-connect'] = 'TRUE'
+
+            # Only update location and country if they haven't been set yet
+            if not csv_data[hostname]['Location']:
+                csv_data[hostname]['Location'] = ip_data.get('location', '')
+            if not csv_data[hostname]['Country']:
+                csv_data[hostname]['Country'] = ip_data.get('country', '')
+
+            # IP address handling - you might want to list all or handle differently
+            csv_data[hostname]['IP Address'] = ip  # This will overwrite with the last IP; need a different approach if multiple IPs need to be recorded
+
 
 
 def process_exporter_data_ssl(exporter_data, csv_data):
