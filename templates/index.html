@@ -6,62 +6,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload YAML File</title>
     <style>
-        /* Including the CSS styles directly in the HTML file */
         body {
-         font-family: 'Arial', sans-serif;
-         background-image: url('{{ url_for('static', filename='background.png') }}');
-         background-size: cover;
-         background-repeat: no-repeat;
-         background-position: center center;
-         background-attachment: fixed;
-         margin: 0;
-         padding: 0;
-         color: white;
+            font-family: 'Arial', sans-serif;
+            background-image: url('{{ url_for('static', filename='background.png') }}');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-attachment: fixed;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
         }
 
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: rgba(0, 0, 0, 0.7);
+            max-width: 600px;
+            background-color: rgba(255, 255, 255, 0.8);
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            box-sizing: border-box;
+            width: 100%;
+            margin: 20px;
+            text-align: center;
         }
 
         h1 {
-            color: #FFD700; 
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
         }
 
-        label, input, button {
-            display: block;
-            margin-bottom: 10px;
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
-        input[type=text], input[type=file] {
+        input[type="file"],
+        input[type="submit"] {
+            padding: 10px;
             width: 100%;
-            padding: 8px;
-            margin: 4px 0;
-            display: inline-block;
+            max-width: 400px;
+            border-radius: 5px;
             border: 1px solid #ccc;
-            border-radius: 4px;
             box-sizing: border-box;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
         }
 
-        input[type=submit] {
-            width: 100%;
-            background-color: #4CAF50;
+        input[type="submit"] {
+            background-color: #333;
             color: white;
-            padding: 14px 20px;
-            margin: 8px 0;
             border: none;
-            border-radius: 4px;
             cursor: pointer;
+        }
 
-          {
-            
-        a:hover
+        input[type="submit"]:hover {
             background-color: #555;
-            
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
         a {
             display: inline-block;
             margin-top: 20px;
@@ -71,24 +86,63 @@
             border-radius: 5px;
             text-decoration: none;
             font-size: 18px;
+            transition: background-color 0.3s;
+            text-align: center;
         }
 
+        a:hover {
+            background-color: #555;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 220px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 150%;
+            left: 50%;
+            margin-left: -110px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
         <h1>Workbook Importer</h1>
+        <!-- Form for Uploading YAML File -->
         <form action="/" method="post" enctype="multipart/form-data">
-            <label for="file">Heiradata YAML:</label>
-            <input type="file" id="file" name="file" accept=".yaml, .eyaml" required>
+            <!-- YAML File Input with Tooltip -->
+            <label for="file" class="tooltip">Heiradata YAML:
+                <span class="tooltiptext">Upload a YAML file in .yaml or .eyaml format to convert to Excel workbook.</span>
+            </label>
+            <input type="file" id="file" name="file" accept=".yaml,.eyaml" required title="Choose a YAML file to upload">
 
             <input type="submit" value="Upload and Convert to CSV">
         </form>
-        
+
+        <!-- Centered GitHub Link -->
         <a href="https://github.com/Brownster/workbook_importer/" target="_blank">View on GitHub</a>
     </div>
 </body>
 
 </html>
-
