@@ -10,6 +10,51 @@ The Workbook Importer is a Flask-based web application designed to facilitate th
 
 ![image](https://github.com/user-attachments/assets/854844e8-a318-4443-8bd5-e2f2f9fe5d5e)
 
+## Supported Prometheus Exporters
+
+Supported OS Exporters
+
+    exporter_linux
+    exporter_windows
+    exporter_verint
+    exporter_vmware
+
+Supported App Exporters
+
+    exporter_cms
+    exporter_avayasbc
+    exporter_aes
+    exporter_verint
+    exporter_gateway
+    exporter_breeze
+    exporter_sm
+    exporter_acm
+    exporter_jmx
+    exporter_kafka
+    exporter_callback
+    exporter_drac
+    exporter_genesyscloud
+    exporter_tcti
+    exporter_aaep
+    exporter_pfsense
+    exporter_aic
+    exporter_zookeeper
+    exporter_aam
+    exporter_ipoffice
+    exporter_iq
+    exporter_oceanamonitor
+    exporter_ams
+    exporter_pc5
+    exporter_wfodb
+    exporter_nuancelm
+    exporter_baas
+    exporter_redis
+    exporter_mpp
+    exporter_network
+    exporter_weblm
+    exporter_audiocodesbc
+    exporter_voice_portal
+
 ## Installation
 
 To get started with the Workbook Importer, follow these steps:
