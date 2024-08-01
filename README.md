@@ -60,3 +60,7 @@ Acknowledgements
     YAML for Python for providing an excellent parsing tool.
 
 Thank you for using or contributing to Workbook Importer!
+
+
+![image](https://github.com/user-attachments/assets/578d3a11-b2c2-4fe6-bc7c-c99456577fcb)
+
