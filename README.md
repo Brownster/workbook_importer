@@ -8,6 +8,8 @@ The Workbook Importer is a Flask-based web application designed to facilitate th
 - **File Conversion**: Automatic conversion of YAML to CSV.
 - **File Download**: Direct download link for the converted CSV file.
 
+![image](https://github.com/user-attachments/assets/854844e8-a318-4443-8bd5-e2f2f9fe5d5e)
+
 ## Installation
 
 To get started with the Workbook Importer, follow these steps:
@@ -47,7 +49,6 @@ Usage
 
     Download the CSV File:
         After the file is processed, a download link will appear. Click the link to download the converted CSV file.
-![image](https://github.com/user-attachments/assets/854844e8-a318-4443-8bd5-e2f2f9fe5d5e)
 
 Contributing
 
