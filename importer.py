@@ -28,7 +28,8 @@ def create_row(hostname, details, exporter_name_os='', exporter_name_app='', exp
         'ssh-banner': 'FALSE',
         'tcp-connect': 'FALSE',
         'ssh_username': details.get('username', ''),
-        'ssh_password': details.get('password', '')
+        'ssh_password': details.get('password', ''),
+        'Environment': details.get('environment', ''),  # Add the environment field here
     }
     return row
 
@@ -39,8 +40,6 @@ def process_exporter_data_os(exporter_data, csv_data, exporter_name):
         else:
             csv_data[hostname]['Exporter_name_os'] = exporter_name
             csv_data[hostname]['OS-Listen-Port'] = details.get('listen_port', '')
-
-
 
 def process_exporter_data_app(exporter_data, csv_data, exporter_name_os='', exporter_name_app=''):
     if exporter_data is None:
@@ -59,9 +58,6 @@ def process_exporter_data_app(exporter_data, csv_data, exporter_name_os='', expo
                         csv_data[hostname][port_key] = details.get('listen_port', '')
                         break
 
-
-
-
 def yaml_to_csv(yaml_file_path, csv_file_path):
     with open(yaml_file_path, 'r') as file:
         data = yaml.safe_load(file)
@@ -70,16 +66,16 @@ def yaml_to_csv(yaml_file_path, csv_file_path):
 
     os_exporters = ['exporter_linux', 'exporter_windows', 'exporter_verint', 'exporter_vmware']
     app_exporters = [
-    'exporter_cms', 'exporter_avayasbc', 'exporter_aes', 'exporter_verint',
-    'exporter_gateway', 'exporter_breeze', 'exporter_sm', 'exporter_acm',
-    'exporter_jmx', 'exporter_kafka', 'exporter_callback',
-    'exporter_drac', 'exporter_genesyscloud', 'exporter_tcti',
-    'exporter_aaep', 'exporter_pfsense', 'exporter_aic', 'exporter_zookeeper',
-    'exporter_aam', 'exporter_ipoffice', 'exporter_iq', 'exporter_oceanamonitor',
-    'exporter_ams', 'exporter_pc5', 'exporter_wfodb', 'exporter_nuancelm', 
-    'exporter_baas', 'exporter_redis', 'exporter_mpp', 'exporter_network',
-    'exporter_weblm', 'exporter_audiocodesbc', 'exporter_voice_portal'
-]
+        'exporter_cms', 'exporter_avayasbc', 'exporter_aes', 'exporter_verint',
+        'exporter_gateway', 'exporter_breeze', 'exporter_sm', 'exporter_acm',
+        'exporter_jmx', 'exporter_kafka', 'exporter_callback',
+        'exporter_drac', 'exporter_genesyscloud', 'exporter_tcti',
+        'exporter_aaep', 'exporter_pfsense', 'exporter_aic', 'exporter_zookeeper',
+        'exporter_aam', 'exporter_ipoffice', 'exporter_iq', 'exporter_oceanamonitor',
+        'exporter_ams', 'exporter_pc5', 'exporter_wfodb', 'exporter_nuancelm', 
+        'exporter_baas', 'exporter_redis', 'exporter_mpp', 'exporter_network',
+        'exporter_weblm', 'exporter_audiocodesbc', 'exporter_voice_portal'
+    ]
     ssl_exporters = ['exporter_ssl']
     bb_exporters = ['exporter_blackbox']
 
@@ -102,7 +98,6 @@ def write_to_csv(csv_data, csv_file_path):
         writer.writeheader()
         for hostname in csv_data:
             writer.writerow(csv_data[hostname])
-
 
 def handle_exporter(exporter_data, exporter_name_os, exporter_name_app, csv_data):
     for hostname, details in exporter_data.items():
@@ -150,8 +145,6 @@ def process_exporter_data_bb(exporter_data, csv_data):
             # IP address handling - you might want to list all or handle differently
             csv_data[hostname]['IP Address'] = ip  # This will overwrite with the last IP; need a different approach if multiple IPs need to be recorded
 
-
-
 def process_exporter_data_ssl(exporter_data, csv_data):
     for hostname, hostname_data in exporter_data.items():
         for ip, ip_data in hostname_data.items():  # Loop through 'hostname_data'
@@ -167,22 +160,6 @@ def process_exporter_data_ssl(exporter_data, csv_data):
 
         csv_data[hostname]['Exporter_SSL'] = 'TRUE'  # Setting SNMP to 'TRUE' if exporter_ssl is present
 
-
-#def process_exporter_data_ssl(exporter_data, csv_data):
-#    for hostname, hostname_data in exporter_data.items():
-#        if hostname not in csv_data:
-#            csv_data[hostname] = dict.fromkeys(FIELDNAMES)
-#            csv_data[hostname]['Hostnames'] = hostname.split('.')[0]
-#            csv_data[hostname]['FQDN'] = hostname
-#            csv_data[hostname]['Domain'] = hostname.split('.')[1] if len(hostname.split('.')) > 1 else ''
-#            csv_data[hostname]['IP Address'] = ip
-#            csv_data[hostname]['Configuration Item Name'] = hostname.split('.')[0]
-#            csv_data[hostname]['Location'] = ip_data.get('location', '')
-#            csv_data[hostname]['Country'] = ip_data.get('country', '')#
-#
-#        csv_data[hostname]['Exporter_SSL'] = 'TRUE'  # Setting SNMP to 'TRUE' if exporter_ssl is present
-
-
 FIELDNAMES = ['Configuration Item Name', 'Location', 'Country', 'Domain', 'Hostnames', 
               'FQDN', 'IP Address', 'Exporter_name_os', 'OS-Listen-Port', 
               'Exporter_name_app', 'App-Listen-Port', 'Exporter_name_app_1', 'App-Listen-Port-1',
@@ -190,8 +167,7 @@ FIELDNAMES = ['Configuration Item Name', 'Location', 'Country', 'Domain', 'Hostn
               'Exporter_name_app_3', 'App-Listen-Port-3', 'http_2xx', 'icmp', 'ssh-banner', 'tcp-connect', 
               'SNMP', 'Exporter_SSL', 'Notes', 'Description', 'Story #', 'Completed', 'Review comments', 'MaaS alarm', 
               'Resolution', 'comm_string', 'ssh_username', 'ssh_password', 'jmx_ports', 'snmp_version', 'snmp_user', 
-              'snmp_password']
-
+              'snmp_password', 'Environment']  # Add 'Environment' to fieldnames
 
 if __name__ == '__main__':
     yaml_file_path = sys.argv[1]
