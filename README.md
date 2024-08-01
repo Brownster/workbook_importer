@@ -56,6 +56,34 @@ Supported App Exporters
     exporter_audiocodesbc
     exporter_voice_portal
 
+## Fields created in the CSV file:
+here is a list of fields (or columns) that will be created in the CSV output file:
+
+    Configuration Item Name
+    Location
+    Country
+    Domain
+    Hostnames
+    FQDN (Fully Qualified Domain Name)
+    IP Address
+    Exporter_name_os (Operating System Exporter Name)
+    OS-Listen-Port (Operating System Listening Port)
+    Exporter_name_app (Application Exporter Name)
+    App-Listen-Port (Application Listening Port)
+    Exporter_name_app_1 (Application Exporter Name for additional instance)
+    App-Listen-Port-1 (Application Listening Port for additional instance)
+    Exporter_name_app_2 (Application Exporter Name for second additional instance)
+    App-Listen-Port-2 (Application Listening Port for second additional instance)
+    Exporter_name_app_3 (Application Exporter Name for third additional instance)
+    App-Listen-Port-3 (Application Listening Port for third additional instance)
+    Exporter_SSL (Indicator if SSL Exporter is used)
+    icmp (Indicator if ICMP is used)
+    ssh-banner (Indicator if SSH Banner is captured)
+    tcp-connect (Indicator if TCP Connect checks are performed)
+    ssh_username (SSH Username if applicable)
+    ssh_password (Encrypted SSH Password if applicable)
+    Environment (Denoting the environment like prod, pre-prod, dev, test, etc.)
+
 ## Installation
 
 To get started with the Workbook Importer, follow these steps:
