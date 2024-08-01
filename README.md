@@ -1,43 +1,62 @@
-# YAML to CSV Converter
+# Workbook Importer
 
-This Python script converts YAML files to CSV format. The script is designed to handle a specific YAML structure, used for describing network configurations and service details, and convert it into a CSV file with a defined set of fields. This tool is particularly useful for network administrators and engineers who need to convert complex configuration files into an easy-to-read format.
+The Workbook Importer is a Flask-based web application designed to facilitate the conversion of YAML files into CSV format. This tool is particularly useful for users who need to transform YAML configuration files into a more universally readable format, such as CSV.
 
 ## Features
 
-- Handles multiple YAML structures including OS exporters, application exporters, blackbox exporters, and SSL exporters.
-- Supports multiple exporter types with varying details.
-- Produces a CSV output with a predefined set of fields.
+- **File Upload Interface**: Simple web interface to upload YAML files.
+- **File Conversion**: Automatic conversion of YAML to CSV.
+- **File Download**: Direct download link for the converted CSV file.
 
-## Requirements
+## Installation
 
-- Python 3.7 or higher
-- PyYAML library
+To get started with the Workbook Importer, follow these steps:
 
-## Usage
+### Prerequisites
 
-Command line usage:
+- Python 3.6+
+- pip (Python package installer)
 
-python yaml_to_csv.py <input_yaml_file> <output_csv_file>
-
-python
-
-Replace `<input_yaml_file>` with the path to your input YAML file, and `<output_csv_file>` with the path where you want the CSV file to be saved.
-
-## Example
-
-Given an input YAML file `input.yaml`, you can convert it to CSV format with the following command:
+### Clone the Repository
 
 ```bash
-python yaml_to_csv.py input.yaml output.csv
+git clone https://github.com/Brownster/workbook_importer.git
+cd workbook_importer
+
+Install Dependencies
+
+bash
+
+pip install -r requirements.txt
+
+Running the Application
+
+bash
+
+python app.py
+
+This will start the Flask server on http://localhost:5001, where you can access the web interface to upload YAML files.
+Usage
+
+    Access the Web Interface:
+        Open your web browser and navigate to http://localhost:5001.
+
+    Upload a YAML File:
+        Click the 'Choose File' button and select the YAML file you wish to convert.
+        Click 'Upload and Convert to CSV' to start the conversion.
+
+    Download the CSV File:
+        After the file is processed, a download link will appear. Click the link to download the converted CSV file.
 
 Contributing
 
-This project is open for contributions. Please fork this repository and create a pull request to propose changes.
+Contributions to the Workbook Importer are welcome! If you have suggestions for improvements or encounter any issues, please open an issue or submit a pull request.
 License
 
-This project is licensed under the MIT License. See the LICENSE file for more details.
+This project is licensed under the MIT License - see the LICENSE file for details.
+Acknowledgements
 
-css
+    Flask framework for making this possible.
+    YAML for Python for providing an excellent parsing tool.
 
-
-This README provides a brief description of the script, its features, requirements, usage, example, and contribution guidelines. It's always a good idea to include a license for your project as well
+Thank you for using or contributing to Workbook Importer!
