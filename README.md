@@ -47,6 +47,7 @@ Usage
 
     Download the CSV File:
         After the file is processed, a download link will appear. Click the link to download the converted CSV file.
+![image](https://github.com/user-attachments/assets/854844e8-a318-4443-8bd5-e2f2f9fe5d5e)
 
 Contributing
 
@@ -60,7 +61,3 @@ Acknowledgements
     YAML for Python for providing an excellent parsing tool.
 
 Thank you for using or contributing to Workbook Importer!
-
-
-![image](https://github.com/user-attachments/assets/578d3a11-b2c2-4fe6-bc7c-c99456577fcb)
-
