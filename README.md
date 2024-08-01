@@ -22,6 +22,7 @@ Supported OS Exporters
 Supported App Exporters
 
     exporter_cms
+    exporter_blackbox
     exporter_avayasbc
     exporter_aes
     exporter_verint
