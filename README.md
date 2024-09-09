@@ -25,6 +25,7 @@ Supported App Exporters
     exporter_blackbox
     exporter_avayasbc
     exporter_aes
+    expoer_aessnmp
     exporter_verint
     exporter_gateway
     exporter_breeze
