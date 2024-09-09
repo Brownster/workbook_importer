@@ -68,7 +68,7 @@ def yaml_to_csv(yaml_file_path, csv_file_path):
     app_exporters = [
         'exporter_cms', 'exporter_avayasbc', 'exporter_aes', 'exporter_verint',
         'exporter_gateway', 'exporter_breeze', 'exporter_sm', 'exporter_acm',
-        'exporter_jmx', 'exporter_kafka', 'exporter_callback',
+        'exporter_jmx', 'exporter_kafka', 'exporter_callback', 'exporter_aessnmp',
         'exporter_drac', 'exporter_genesyscloud', 'exporter_tcti',
         'exporter_aaep', 'exporter_pfsense', 'exporter_aic', 'exporter_zookeeper',
         'exporter_aam', 'exporter_ipoffice', 'exporter_iq', 'exporter_oceanamonitor',
@@ -145,20 +145,49 @@ def process_exporter_data_bb(exporter_data, csv_data):
             # IP address handling - you might want to list all or handle differently
             csv_data[hostname]['IP Address'] = ip  # This will overwrite with the last IP; need a different approach if multiple IPs need to be recorded
 
+# def process_exporter_data_ssl(exporter_data, csv_data):
+#     for hostname, hostname_data in exporter_data.items():
+#         for ip, ip_data in hostname_data.items():  # Loop through 'hostname_data'
+#             if hostname not in csv_data:
+#                 csv_data[hostname] = dict.fromkeys(FIELDNAMES)
+#                 csv_data[hostname]['Hostnames'] = hostname.split('.')[0]
+#                 csv_data[hostname]['FQDN'] = hostname
+#                 csv_data[hostname]['Domain'] = hostname.split('.')[1] if len(hostname.split('.')) > 1 else ''
+#                 csv_data[hostname]['IP Address'] = ip  # Use 'ip' from the loop
+#                 csv_data[hostname]['Configuration Item Name'] = hostname.split('.')[0]
+#                 csv_data[hostname]['Location'] = ip_data.get('location', '')  # Use 'ip_data' from the loop
+#                 csv_data[hostname]['Country'] = ip_data.get('country', '')    # Use 'ip_data' from the loop
+
+#         csv_data[hostname]['Exporter_SSL'] = 'TRUE'  # Setting SNMP to 'TRUE' if exporter_ssl is present
+
 def process_exporter_data_ssl(exporter_data, csv_data):
+    """
+    Process the SSL exporter data, ensuring each hostname within the exporter
+    has its own row, even if there are inconsistencies across different exporters.
+    
+    Args:
+        exporter_data (dict): YAML data for the SSL exporter.
+        csv_data (dict): Existing CSV data to append or update with the exporter data.
+    """
     for hostname, hostname_data in exporter_data.items():
-        for ip, ip_data in hostname_data.items():  # Loop through 'hostname_data'
+        try:
+            # If the hostname is not already in csv_data, create a new row
             if hostname not in csv_data:
                 csv_data[hostname] = dict.fromkeys(FIELDNAMES)
                 csv_data[hostname]['Hostnames'] = hostname.split('.')[0]
                 csv_data[hostname]['FQDN'] = hostname
-                csv_data[hostname]['Domain'] = hostname.split('.')[1] if len(hostname.split('.')) > 1 else ''
-                csv_data[hostname]['IP Address'] = ip  # Use 'ip' from the loop
+                csv_data[hostname]['Domain'] = '.'.join(hostname.split('.')[1:]) if len(hostname.split('.')) > 1 else ''
+                csv_data[hostname]['IP Address'] = hostname_data.get('ip_address', '')
                 csv_data[hostname]['Configuration Item Name'] = hostname.split('.')[0]
-                csv_data[hostname]['Location'] = ip_data.get('location', '')  # Use 'ip_data' from the loop
-                csv_data[hostname]['Country'] = ip_data.get('country', '')    # Use 'ip_data' from the loop
+                csv_data[hostname]['Location'] = hostname_data.get('location', 'Unknown')
+                csv_data[hostname]['Country'] = hostname_data.get('country', 'Unknown')
 
-        csv_data[hostname]['Exporter_SSL'] = 'TRUE'  # Setting SNMP to 'TRUE' if exporter_ssl is present
+            # Set Exporter_SSL to TRUE for both new and existing rows
+            csv_data[hostname]['Exporter_SSL'] = 'TRUE'
+        
+        except Exception as e:
+            # Log any issues with the hostname or hostname_data
+            print(f"Error processing hostname {hostname}: {e}")
 
 FIELDNAMES = ['Configuration Item Name', 'Location', 'Country', 'Domain', 'Hostnames', 
               'FQDN', 'IP Address', 'Exporter_name_os', 'OS-Listen-Port', 
