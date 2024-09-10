@@ -11,6 +11,7 @@ def create_row(hostname, details, exporter_name_os='', exporter_name_app='', exp
         'Configuration Item Name': hostname_field,
         'Location': details.get('location', ''),
         'Country': details.get('country', ''),
+        'Environment': details.get('environment', ''),
         'Domain': domain_field,
         'Hostnames': hostname_field,
         'FQDN': hostname,
@@ -24,12 +25,12 @@ def create_row(hostname, details, exporter_name_os='', exporter_name_app='', exp
         'Exporter_name_app_3': exporter_name_app,
         'App-Listen-Port-3': details.get('listen_port', ''),
         'Exporter_SSL': 'FALSE',
+        'http_2xx': 'FALSE',
         'icmp': 'FALSE',
         'ssh-banner': 'FALSE',
         'tcp-connect': 'FALSE',
         'ssh_username': details.get('username', ''),
-        'ssh_password': details.get('password', ''),
-        'Environment': details.get('environment', ''),  # Add the environment field here
+        'ssh_password': details.get('password', ''),  
     }
     return row
 
@@ -112,39 +113,6 @@ def handle_exporter(exporter_data, exporter_name_os, exporter_name_app, csv_data
             row = create_row(hostname, details, exporter_name_os, exporter_name_app, app_index)
             csv_data[details['ip_address']] = row
 
-# def process_exporter_data_bb(exporter_data, csv_data):
-#     for hostname, hostname_data in exporter_data.items():
-#         # Initialize the data structure for the hostname if not already present
-#         if hostname not in csv_data:
-#             csv_data[hostname] = dict.fromkeys(FIELDNAMES, '')
-#             csv_data[hostname]['Hostnames'] = hostname.split('.')[0]
-#             csv_data[hostname]['FQDN'] = hostname
-#             csv_data[hostname]['Domain'] = '.'.join(hostname.split('.')[1:]) if len(hostname.split('.')) > 1 else ''
-#             csv_data[hostname]['Configuration Item Name'] = hostname.split('.')[0]
-
-#         # Initialize the flags
-#         csv_data[hostname]['icmp'] = 'FALSE'
-#         csv_data[hostname]['tcp-connect'] = 'FALSE'
-#         csv_data[hostname]['ssh-banner'] = 'FALSE'
-
-#         for ip, ip_data in hostname_data.items():
-#             module = ip_data.get('module', '')
-#             if module == 'icmp':
-#                 csv_data[hostname]['icmp'] = 'TRUE'
-#             elif module == 'tcp_connect':
-#                 csv_data[hostname]['tcp-connect'] = 'TRUE'
-#             elif module == 'ssh_banner':
-#                 csv_data[hostname]['ssh-banner'] = 'TRUE'
-
-#             # Only update location and country if they haven't been set yet
-#             if not csv_data[hostname]['Location']:
-#                 csv_data[hostname]['Location'] = ip_data.get('location', '')
-#             if not csv_data[hostname]['Country']:
-#                 csv_data[hostname]['Country'] = ip_data.get('country', '')
-
-#             # IP address handling - you might want to list all or handle differently
-#             csv_data[hostname]['IP Address'] = ip  # This will overwrite with the last IP; need a different approach if multiple IPs need to be recorded
-
 def process_exporter_data_bb(exporter_data, csv_data):
     for hostname, hostname_data in exporter_data.items():
         # Initialize the data structure for the hostname if not already present
@@ -159,6 +127,7 @@ def process_exporter_data_bb(exporter_data, csv_data):
         csv_data[hostname]['icmp'] = 'FALSE'
         csv_data[hostname]['tcp-connect'] = 'FALSE'
         csv_data[hostname]['ssh-banner'] = 'FALSE'
+        csv_data[hostname]['http_2xx'] = 'FALSE'
 
         for ip, ip_data in hostname_data.items():
             # Strip the port from the IP (if any)
@@ -172,31 +141,20 @@ def process_exporter_data_bb(exporter_data, csv_data):
                 csv_data[hostname]['tcp-connect'] = 'TRUE'
             elif module == 'ssh_banner':
                 csv_data[hostname]['ssh-banner'] = 'TRUE'
+            elif module == 'http_2xx':
+                csv_data[hostname]['http_2xx'] = 'TRUE'
 
-            # Only update location and country if they haven't been set yet
+            # Only update location, country and environment if they haven't been set yet
             if not csv_data[hostname]['Location']:
                 csv_data[hostname]['Location'] = ip_data.get('location', '')
             if not csv_data[hostname]['Country']:
                 csv_data[hostname]['Country'] = ip_data.get('country', '')
+            if not csv_data[hostname]['Environment']:
+                csv_data[hostname]['Environment'] = ip_data.get('environment', '')
 
             # If the 'IP Address' is not already set, add the clean IP
             if not csv_data[hostname]['IP Address']:
                 csv_data[hostname]['IP Address'] = clean_ip
-
-# def process_exporter_data_ssl(exporter_data, csv_data):
-#     for hostname, hostname_data in exporter_data.items():
-#         for ip, ip_data in hostname_data.items():  # Loop through 'hostname_data'
-#             if hostname not in csv_data:
-#                 csv_data[hostname] = dict.fromkeys(FIELDNAMES)
-#                 csv_data[hostname]['Hostnames'] = hostname.split('.')[0]
-#                 csv_data[hostname]['FQDN'] = hostname
-#                 csv_data[hostname]['Domain'] = hostname.split('.')[1] if len(hostname.split('.')) > 1 else ''
-#                 csv_data[hostname]['IP Address'] = ip  # Use 'ip' from the loop
-#                 csv_data[hostname]['Configuration Item Name'] = hostname.split('.')[0]
-#                 csv_data[hostname]['Location'] = ip_data.get('location', '')  # Use 'ip_data' from the loop
-#                 csv_data[hostname]['Country'] = ip_data.get('country', '')    # Use 'ip_data' from the loop
-
-#         csv_data[hostname]['Exporter_SSL'] = 'TRUE'  # Setting SNMP to 'TRUE' if exporter_ssl is present
 
 def process_exporter_data_ssl(exporter_data, csv_data):
     """
@@ -219,7 +177,8 @@ def process_exporter_data_ssl(exporter_data, csv_data):
                 csv_data[hostname]['Configuration Item Name'] = hostname.split('.')[0]
                 csv_data[hostname]['Location'] = hostname_data.get('location', 'Unknown')
                 csv_data[hostname]['Country'] = hostname_data.get('country', 'Unknown')
-
+                csv_data[hostname]['Environment'] = hostname_data.get('environment', 'Unknown')
+                
             # Set Exporter_SSL to TRUE for both new and existing rows
             csv_data[hostname]['Exporter_SSL'] = 'TRUE'
         
@@ -227,14 +186,14 @@ def process_exporter_data_ssl(exporter_data, csv_data):
             # Log any issues with the hostname or hostname_data
             print(f"Error processing hostname {hostname}: {e}")
 
-FIELDNAMES = ['Configuration Item Name', 'Location', 'Country', 'Domain', 'Hostnames', 
+FIELDNAMES = ['Configuration Item Name', 'Location', 'Country', 'Environment', 'Domain', 'Hostnames', 
               'FQDN', 'IP Address', 'Exporter_name_os', 'OS-Listen-Port', 
               'Exporter_name_app', 'App-Listen-Port', 'Exporter_name_app_1', 'App-Listen-Port-1',
               'Exporter_name_app_2', 'App-Listen-Port-2', 
               'Exporter_name_app_3', 'App-Listen-Port-3', 'http_2xx', 'icmp', 'ssh-banner', 'tcp-connect', 
               'SNMP', 'Exporter_SSL', 'Notes', 'Description', 'Story #', 'Completed', 'Review comments', 'MaaS alarm', 
               'Resolution', 'comm_string', 'ssh_username', 'ssh_password', 'jmx_ports', 'snmp_version', 'snmp_user', 
-              'snmp_password', 'Environment']  # Add 'Environment' to fieldnames
+              'snmp_password']  
 
 if __name__ == '__main__':
     yaml_file_path = sys.argv[1]
