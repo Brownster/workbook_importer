@@ -169,7 +169,7 @@ def process_exporter_data_ssl(exporter_data, csv_data):
             # Log any issues with the hostname or hostname_data
             print(f"Error processing hostname {hostname}: {e}")
 
-FIELDNAMES = ['Configuration Item Name', 'Location', 'Country', 'Environment', 'Domain', 'Hostnames', 
+FIELDNAMES = ['Configuration Item Name', 'Location', 'Country', 'Environment','Secret Server url', 'Domain', 'Hostnames', 
               'FQDN', 'IP Address', 'Exporter_name_os', 'OS-Listen-Port', 
               'Exporter_name_app', 'App-Listen-Port', 'Exporter_name_app_2', 'App-Listen-Port-2',
               'Exporter_name_app_3', 'App-Listen-Port-3', 'http_2xx', 'icmp', 'ssh-banner', 'tcp-connect', 
