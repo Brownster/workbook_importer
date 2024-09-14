@@ -2,6 +2,7 @@ from flask import Flask, request, send_from_directory, render_template
 from werkzeug.utils import secure_filename
 import os
 import importer
+from urllib.parse import quote as url_quote
 
 app = Flask(__name__)
 
