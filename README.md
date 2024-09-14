@@ -18,6 +18,7 @@ Supported OS Exporters
     exporter_windows
     exporter_verint
     exporter_vmware
+    exporter_aacc
 
 Supported App Exporters
 
@@ -55,7 +56,7 @@ Supported App Exporters
     exporter_network
     exporter_weblm
     exporter_audiocodesbc
-    exporter_voice_portal
+    exporter_voiceportal
 
 ## Fields created in the CSV file:
 here is a list of fields (or columns) that will be created in the CSV output file:
