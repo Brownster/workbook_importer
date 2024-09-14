@@ -65,7 +65,7 @@ def yaml_to_csv(yaml_file_path, csv_file_path):
 
     csv_data = {}
 
-    os_exporters = ['exporter_linux', 'exporter_windows', 'exporter_verint', 'exporter_vmware']
+    os_exporters = ['exporter_linux', 'exporter_windows', 'exporter_verint', 'exporter_vmware', 'exporter_aacc']
     app_exporters = [
         'exporter_cms', 'exporter_avayasbc', 'exporter_aes', 'exporter_verint',
         'exporter_gateway', 'exporter_breeze', 'exporter_sm', 'exporter_acm',
@@ -75,7 +75,7 @@ def yaml_to_csv(yaml_file_path, csv_file_path):
         'exporter_aam', 'exporter_ipoffice', 'exporter_iq', 'exporter_oceanamonitor',
         'exporter_ams', 'exporter_pc5', 'exporter_wfodb', 'exporter_nuancelm', 
         'exporter_baas', 'exporter_redis', 'exporter_mpp', 'exporter_network',
-        'exporter_weblm', 'exporter_audiocodesbc', 'exporter_voice_portal'
+        'exporter_weblm', 'exporter_audiocodesbc', 'exporter_voiceportal'
     ]
     ssl_exporters = ['exporter_ssl']
     bb_exporters = ['exporter_blackbox']
