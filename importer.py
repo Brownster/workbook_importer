@@ -71,7 +71,7 @@ def yaml_to_csv(yaml_file_path, csv_file_path):
 
     os_exporters = ['exporter_linux', 'exporter_windows', 'exporter_verint', 'exporter_vmware', 'exporter_aacc']
     app_exporters = [
-        'exporter_cms', 'exporter_avayasbc', 'exporter_aes', 'exporter_verint',
+        'exporter_cms', 'exporter_avayasbc', 'exporter_aes',
         'exporter_gateway', 'exporter_breeze', 'exporter_sm', 'exporter_acm',
         'exporter_jmx', 'exporter_kafka', 'exporter_callback', 'exporter_aessnmp',
         'exporter_drac', 'exporter_genesyscloud', 'exporter_tcti','exporter_filestat',
