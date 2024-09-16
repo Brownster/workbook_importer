@@ -74,7 +74,7 @@ def yaml_to_csv(yaml_file_path, csv_file_path):
         'exporter_cms', 'exporter_avayasbc', 'exporter_aes', 'exporter_verint',
         'exporter_gateway', 'exporter_breeze', 'exporter_sm', 'exporter_acm',
         'exporter_jmx', 'exporter_kafka', 'exporter_callback', 'exporter_aessnmp',
-        'exporter_drac', 'exporter_genesyscloud', 'exporter_tcti',
+        'exporter_drac', 'exporter_genesyscloud', 'exporter_tcti','exporter_filestat',
         'exporter_aaep', 'exporter_pfsense', 'exporter_aic', 'exporter_zookeeper',
         'exporter_aam', 'exporter_ipoffice', 'exporter_iq', 'exporter_oceanamonitor',
         'exporter_ams', 'exporter_pc5', 'exporter_wfodb', 'exporter_nuancelm', 
