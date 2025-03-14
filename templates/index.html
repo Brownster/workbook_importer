@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload YAML File</title>
+    <title>Workbook Importer - YAML to CSV Converter</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -17,16 +17,16 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             color: #333;
         }
 
         .container {
-            max-width: 600px;
-            background-color: rgba(255, 255, 255, 0.8);
+            max-width: 800px;
+            background-color: rgba(255, 255, 255, 0.9);
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+            padding: 30px;
             box-sizing: border-box;
             width: 100%;
             margin: 20px;
@@ -35,63 +35,79 @@
 
         h1 {
             text-align: center;
-            font-size: 24px;
-            margin-bottom: 20px;
+            font-size: 28px;
+            margin-bottom: 15px;
             color: #333;
+        }
+
+        .description {
+            margin-bottom: 25px;
+            text-align: left;
+            line-height: 1.5;
+            color: #555;
         }
 
         form {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 15px;
+            margin-bottom: 25px;
         }
 
         input[type="file"],
-        input[type="submit"] {
-            padding: 10px;
+        input[type="submit"],
+        .button {
+            padding: 12px;
             width: 100%;
             max-width: 400px;
             border-radius: 5px;
             border: 1px solid #ccc;
             box-sizing: border-box;
             font-size: 16px;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
         }
 
-        input[type="submit"] {
-            background-color: #333;
+        input[type="submit"],
+        .button {
+            background-color: #4a6da7;
             color: white;
             border: none;
             cursor: pointer;
+            font-weight: bold;
         }
 
-        input[type="submit"]:hover {
-            background-color: #555;
+        input[type="submit"]:hover,
+        .button:hover {
+            background-color: #375990;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
         }
 
         label {
             font-weight: bold;
             margin-bottom: 5px;
             color: #333;
+            display: block;
         }
 
         a {
             display: inline-block;
-            margin-top: 20px;
+            margin: 8px;
             padding: 10px 20px;
             background-color: #333;
             color: white;
             border-radius: 5px;
             text-decoration: none;
-            font-size: 18px;
-            transition: background-color 0.3s;
+            font-size: 16px;
+            transition: all 0.3s;
             text-align: center;
         }
 
         a:hover {
             background-color: #555;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
         }
 
         .tooltip {
@@ -102,17 +118,17 @@
 
         .tooltip .tooltiptext {
             visibility: hidden;
-            width: 220px;
+            width: 280px;
             background-color: #333;
             color: #fff;
-            text-align: center;
+            text-align: left;
             border-radius: 5px;
-            padding: 10px;
+            padding: 12px;
             position: absolute;
             z-index: 1;
             bottom: 150%;
             left: 50%;
-            margin-left: -110px;
+            margin-left: -140px;
             opacity: 0;
             transition: opacity 0.3s;
             font-size: 14px;
@@ -123,25 +139,288 @@
             visibility: visible;
             opacity: 1;
         }
+        
+        .help-section {
+            text-align: left;
+            background-color: rgba(245, 245, 245, 0.9);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 25px;
+            border-left: 4px solid #4a6da7;
+        }
+        
+        .help-section h2 {
+            color: #4a6da7;
+            font-size: 20px;
+            margin-top: 0;
+        }
+        
+        .help-section ul {
+            padding-left: 20px;
+        }
+        
+        .help-section li {
+            margin-bottom: 8px;
+        }
+        
+        .template-section {
+            margin: 25px 0;
+        }
+        
+        .buttons-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .error-message {
+            background-color: rgba(255, 200, 200, 0.9);
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #dc3545;
+            text-align: left;
+        }
+        
+        .success-message {
+            background-color: rgba(200, 255, 200, 0.9);
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #28a745;
+            text-align: center;
+        }
+        
+        .download-button {
+            background-color: #28a745;
+            color: white;
+            font-weight: bold;
+            padding: 12px 25px;
+            margin: 15px auto;
+            display: inline-block;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .download-button:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .info-text {
+            font-size: 14px;
+            color: #666;
+            margin-top: 15px;
+        }
+        
+        .field-description {
+            background-color: rgba(240, 240, 240, 0.9);
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: left;
+            display: none;
+        }
+        
+        .field-description h3 {
+            margin-top: 0;
+            color: #4a6da7;
+        }
+        
+        .field-description table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        .field-description th, .field-description td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        .field-description th {
+            background-color: #f2f2f2;
+        }
+        
+        .toggle-fields {
+            font-size: 14px;
+            color: #4a6da7;
+            cursor: pointer;
+            margin-top: 10px;
+            text-decoration: underline;
+        }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle field descriptions visibility
+            const toggleButton = document.getElementById('toggle-fields');
+            const fieldDescription = document.getElementById('field-description');
+            
+            if(toggleButton && fieldDescription) {
+                toggleButton.addEventListener('click', function() {
+                    if (fieldDescription.style.display === 'none' || fieldDescription.style.display === '') {
+                        fieldDescription.style.display = 'block';
+                        toggleButton.textContent = 'Hide CSV Field Descriptions';
+                    } else {
+                        fieldDescription.style.display = 'none';
+                        toggleButton.textContent = 'Show CSV Field Descriptions';
+                    }
+                });
+            }
+        });
+    </script>
 </head>
 
 <body>
     <div class="container">
         <h1>Workbook Importer</h1>
+        
+        <div class="description">
+            Convert your Puppet hieradata YAML files to CSV format for easier auditing and review of Prometheus monitoring configurations.
+        </div>
+        
+        {% if error %}
+        <div class="error-message">
+            <strong>Error:</strong> {{ error }}
+        </div>
+        {% endif %}
+        
+        {% if success_html %}
+        {{ success_html|safe }}
+        {% endif %}
+        
         <!-- Form for Uploading YAML File -->
         <form action="/" method="post" enctype="multipart/form-data">
-            <!-- YAML File Input with Tooltip -->
-            <label for="file" class="tooltip">Heiradata YAML:
-                <span class="tooltiptext">Upload a YAML file in .yaml or .eyaml format to convert to Excel workbook.</span>
+            <!-- YAML File Input with enhanced Tooltip -->
+            <label for="file" class="tooltip">Upload Hieradata YAML File:
+                <span class="tooltiptext">
+                    Upload a YAML file (.yaml or .eyaml) containing your Prometheus exporter configurations.
+                    The tool will convert your hieradata to CSV format with appropriate fields for monitoring workbooks.
+                </span>
             </label>
-            <input type="file" id="file" name="file" accept=".yaml,.eyaml" required title="Choose a YAML file to upload">
+            <input type="file" id="file" name="file" accept=".yaml,.yml,.eyaml" required title="Choose a YAML file to upload">
 
             <input type="submit" value="Upload and Convert to CSV">
         </form>
 
-        <!-- Centered GitHub Link -->
-        <a href="https://github.com/Brownster/workbook_importer/" target="_blank">View on GitHub</a>
+        <!-- Template Download Section -->
+        <div class="template-section">
+            <h2>Need help getting started?</h2>
+            <p>Download our template YAML file to see the expected format:</p>
+            <a href="/template" class="button">Download Template YAML</a>
+        </div>
+        
+        <!-- Help Section -->
+        <div class="help-section">
+            <h2>How it works</h2>
+            <ul>
+                <li><strong>Upload</strong> your hieradata YAML file using the form above</li>
+                <li><strong>Convert</strong> - The application processes your YAML and transforms it into CSV format</li>
+                <li><strong>Download</strong> - Get your formatted CSV file ready for use in spreadsheets or workbooks</li>
+            </ul>
+            
+            <h2>Supported Exporters</h2>
+            <p>This tool supports a wide range of Prometheus exporters including:</p>
+            <ul>
+                <li><strong>OS Exporters:</strong> linux, windows, verint, vmware, aacc</li>
+                <li><strong>App Exporters:</strong> cms, blackbox, avayasbc, aes, and many more</li>
+                <li><strong>SSL & Blackbox:</strong> Special support for SSL certificate and blackbox monitoring</li>
+            </ul>
+            
+            <div id="toggle-fields" class="toggle-fields">Show CSV Field Descriptions</div>
+            
+            <div id="field-description" class="field-description">
+                <h3>CSV Output Fields</h3>
+                <p>The CSV file will contain the following fields:</p>
+                <table>
+                    <tr>
+                        <th>Field Name</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td>Configuration Item Name</td>
+                        <td>The hostname without domain</td>
+                    </tr>
+                    <tr>
+                        <td>Location</td>
+                        <td>Physical or logical location of the server</td>
+                    </tr>
+                    <tr>
+                        <td>Country</td>
+                        <td>Country where the server is located</td>
+                    </tr>
+                    <tr>
+                        <td>Environment</td>
+                        <td>Deployment environment (prod, dev, test, etc.)</td>
+                    </tr>
+                    <tr>
+                        <td>Domain</td>
+                        <td>Domain portion of the FQDN</td>
+                    </tr>
+                    <tr>
+                        <td>Hostnames</td>
+                        <td>Short hostname</td>
+                    </tr>
+                    <tr>
+                        <td>FQDN</td>
+                        <td>Fully Qualified Domain Name</td>
+                    </tr>
+                    <tr>
+                        <td>IP Address</td>
+                        <td>IP address of the server</td>
+                    </tr>
+                    <tr>
+                        <td>Exporter_name_os</td>
+                        <td>Name of the OS-level exporter</td>
+                    </tr>
+                    <tr>
+                        <td>OS-Listen-Port</td>
+                        <td>Port number for the OS exporter</td>
+                    </tr>
+                    <tr>
+                        <td>Exporter_name_app</td>
+                        <td>Name of the application exporter</td>
+                    </tr>
+                    <tr>
+                        <td>App-Listen-Port</td>
+                        <td>Port number for the application exporter</td>
+                    </tr>
+                    <tr>
+                        <td>Exporter_SSL</td>
+                        <td>Flag indicating if SSL exporter is used</td>
+                    </tr>
+                    <tr>
+                        <td>http_2xx</td>
+                        <td>Flag for HTTP 2xx blackbox checks</td>
+                    </tr>
+                    <tr>
+                        <td>icmp</td>
+                        <td>Flag for ICMP blackbox checks</td>
+                    </tr>
+                    <tr>
+                        <td>ssh-banner</td>
+                        <td>Flag for SSH banner blackbox checks</td>
+                    </tr>
+                    <tr>
+                        <td>tcp-connect</td>
+                        <td>Flag for TCP connection blackbox checks</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Footer Links -->
+        <div class="buttons-container">
+            <a href="https://github.com/Brownster/workbook_importer/" target="_blank">View on GitHub</a>
+            <a href="https://github.com/Brownster/workbook_importer/issues" target="_blank">Report Issues</a>
+        </div>
     </div>
 </body>
 
