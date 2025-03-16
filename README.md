@@ -2,7 +2,8 @@
 
 The Workbook Importer is a Flask-based web application specifically designed to facilitate the conversion of Puppet YAML hieradata configurations into CSV format. This tool is invaluable for systems administrators and monitoring engineers who manage Prometheus instances. It simplifies the process of transforming complex YAML configuration files, used in Puppet for provisioning monitoring targets, into a universally readable CSV format, making it easier to audit, document, and review configurations.
 
-![image](https://github.com/user-attachments/assets/854844e8-a318-4443-8bd5-e2f2f9fe5d5e)
+![image](https://github.com/user-attachments/assets/f7d756b2-b3a4-4a93-95c6-655354af7ab3)
+
 
 ## Features
 
